@@ -62,8 +62,7 @@ def import_genre(cur):
             movies_number = int(movies_number)
             market_share = float(row['MARKET SHARE'].replace('%', ''))
 
-            print(Genre(name, movies_number, market_share).save_sql())
-            # cur.execute(Genre(name, movies_number, market_share).save_sql())
+            cur.execute(Genre(name, movies_number, market_share).save_sql())
 
 
 def import_distributors(cur):
@@ -73,8 +72,7 @@ def import_distributors(cur):
             movies_number = int(row['MOVIES'])
             market_share = float(row['MARKET SHARE'].replace('%', ''))
 
-            print(Distributor(name, movies_number, market_share).save_sql())
-            # cur.execute(Distributor(name, movies_number, market_share).save_sql())
+            cur.execute(Distributor(name, movies_number, market_share).save_sql())
 
 
 def import_movies(cur):
@@ -95,20 +93,13 @@ def import_movies(cur):
             cur.execute('select id from top_revenue_distributor where name = %s', (distributor,))
             distributor_id = cur.fetchone()[0]
 
-            print(
+            cur.execute(
                 Movie(
-                     name=name, rating=rating, year=year,
-                     total_revenue=total_revenue, genre_id=genre_id,
-                     distributor_id=distributor_id
+                    name=name, rating=rating, year=year,
+                    total_revenue=total_revenue, genre_id=genre_id,
+                    distributor_id=distributor_id
                 ).save_sql()
             )
-            # cur.execute(
-            #     Movie(
-            #         name=name, rating=rating, year=year,
-            #         total_revenue=total_revenue, genre_id=genre_id,
-            #         distributor_id=distributor_id
-            #     ).save_sql()
-            # )
 
 
 if __name__ == '__main__':
@@ -119,11 +110,11 @@ if __name__ == '__main__':
 
     with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
         import_genre(cursor)
-        #conn.commit()
+        conn.commit()
 
         import_distributors(cursor)
-        #conn.commit()
+        conn.commit()
 
         import_movies(cursor)
-        #conn.commit()
+        conn.commit()
     conn.close()
